@@ -3,7 +3,7 @@ package app;
 import java.util.ArrayList;
 
 public class Classroom {
-    String name;
+    public String name;
     public ArrayList<Student> students = new ArrayList<>();
 
     public Classroom(String name) {

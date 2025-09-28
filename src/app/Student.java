@@ -3,16 +3,23 @@ package app;
 import java.util.ArrayList;
 
 public class Student {
-    String name;
+    public String name;
 
-    public ArrayList<Gradle> gradles = new ArrayList<>();
+    private ArrayList<Gradle> gradles = new ArrayList<>();
 
     public Student(String name) {
         this.name = name;
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return "Aluno: " + name + ", Media: " + average();
+    }
+
+    public void showGrades() {
+        for (Gradle gradle : gradles) {
+            IO.println(gradle);
+        }
     }
 
     public double average() {
@@ -21,5 +28,15 @@ public class Student {
             sum += gradle.value;
         }
         return sum / gradles.size();
+    }
+
+    public void addGradle(String subject, double value) {
+        for (Gradle gradle : gradles) {
+            if (gradle.name.equals(subject)) {
+                gradle.value = value;
+                return;
+            }
+        }
+        gradles.add(new Gradle(subject, value));
     }
 }
