@@ -1,5 +1,5 @@
 package interfaces;
 
-public interface IService<type> {
-    public type execute();
+public interface IService<T> {
+    public T execute();
 }

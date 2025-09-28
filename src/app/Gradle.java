@@ -2,9 +2,9 @@ package app;
 
 public class Gradle {
     String name;
-    Float value;
+    Double value;
 
-    public Gradle(String name, Float value) {
+    public Gradle(String name, double  value) {
         this.name = name;
         this.value = value;
     }
