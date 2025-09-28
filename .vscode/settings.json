@@ -1,0 +1,7 @@
+{
+  "java.configuration.runtimes": [
+    {
+      "name": "JavaSE-25"
+    }
+  ]
+}
