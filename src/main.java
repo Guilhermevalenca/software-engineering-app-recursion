@@ -66,19 +66,16 @@ void main() {
     frame.setSize(900, 500);
     frame.setLayout(new BorderLayout());
 
-    // ==== MODELO DA TABELA ====
     DefaultTableModel tableModel = new DefaultTableModel();
-    tableModel.addColumn("Aluno"); // primeira coluna fixa
+    tableModel.addColumn("Aluno");
     JTable table = new JTable(tableModel);
     JScrollPane scrollPane = new JScrollPane(table);
 
-    // ==== FORMULÁRIO ====
     JPanel formPanel = new JPanel(new GridLayout(0, 2, 5, 5));
 
     JTextField studentNameField = new JTextField();
     JComboBox<String> studentSelector = new JComboBox<>();
 
-    // 👉 disciplinas vindas de Gradle.subjects (editável!)
     JComboBox<String> subjectSelector = new JComboBox<>(Gradle.subjects.toArray(new String[0]));
     subjectSelector.setEditable(true);
 
@@ -93,18 +90,16 @@ void main() {
     formPanel.add(new JLabel("Selecionar Aluno:"));
     formPanel.add(studentSelector);
     formPanel.add(new JLabel("Disciplina:"));
-    formPanel.add(subjectSelector); // JComboBox editável
+    formPanel.add(subjectSelector);
     formPanel.add(new JLabel("Nota:"));
     formPanel.add(gradeField);
     formPanel.add(addStudentButton);
     formPanel.add(addGradeButton);
 
-    // ==== AREA DE RANK ====
     JTextArea outputArea = new JTextArea();
     outputArea.setEditable(false);
     JScrollPane outputScroll = new JScrollPane(outputArea);
 
-    // ==== BOTÕES ====
     JPanel bottomPanel = new JPanel();
     bottomPanel.add(showRankButton);
 
@@ -113,9 +108,6 @@ void main() {
     frame.add(outputScroll, BorderLayout.EAST);
     frame.add(bottomPanel, BorderLayout.SOUTH);
 
-    // ==== LÓGICA ====
-
-    // Adicionar aluno
     addStudentButton.addActionListener(e -> {
         String name = studentNameField.getText().trim();
         if (name.isEmpty()) {
@@ -125,14 +117,12 @@ void main() {
         Student student = new Student(name);
         classroom.students.add(student);
 
-        // adiciona linha na tabela
         tableModel.addRow(new Object[] { name });
         studentSelector.addItem(name);
 
         studentNameField.setText("");
     });
 
-    // Adicionar nota ao aluno selecionado
     addGradeButton.addActionListener(e -> {
         int selectedIndex = studentSelector.getSelectedIndex();
         if (selectedIndex == -1) {
@@ -148,7 +138,6 @@ void main() {
         try {
             double gradeValue = Double.parseDouble(gradeStr);
 
-            // se a disciplina digitada não existe ainda → adiciona
             if (!Gradle.subjects.contains(subject)) {
                 Gradle.subjects.add(subject);
                 subjectSelector.addItem(subject);
@@ -157,7 +146,6 @@ void main() {
             Student student = classroom.students.get(selectedIndex);
             student.addGradle(subject, gradeValue);
 
-            // verificar se já existe coluna para essa matéria
             int colIndex = -1;
             for (int i = 1; i < tableModel.getColumnCount(); i++) {
                 if (tableModel.getColumnName(i).equals(subject)) {
@@ -166,13 +154,11 @@ void main() {
                 }
             }
 
-            // se não existe, cria nova coluna
             if (colIndex == -1) {
                 tableModel.addColumn(subject);
                 colIndex = tableModel.getColumnCount() - 1;
             }
 
-            // atualizar célula correta
             int row = selectedIndex;
             tableModel.setValueAt(student.name, row, 0);
             tableModel.setValueAt(gradeValue, row, colIndex);
@@ -183,7 +169,6 @@ void main() {
         }
     });
 
-    // Mostrar ranking
     showRankButton.addActionListener(e -> {
         ArrayList<Student> rankStudents = classroom.getRank();
         outputArea.setText("--- Ranking ---\n");
