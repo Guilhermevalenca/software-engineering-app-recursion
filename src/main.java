@@ -12,20 +12,17 @@ void main() {
     frame.setSize(1000, 500);
     frame.setLayout(new BorderLayout());
 
-    // ==== MODELO DA TABELA ====
     DefaultTableModel tableModel = new DefaultTableModel();
-    tableModel.addColumn("Aluno"); // primeira coluna fixa
-    tableModel.addColumn("Média"); // coluna de média
+    tableModel.addColumn("Aluno");
+    tableModel.addColumn("Média");
     JTable table = new JTable(tableModel);
     JScrollPane scrollPane = new JScrollPane(table);
 
-    // ==== FORMULÁRIO ====
     JPanel formPanel = new JPanel(new GridLayout(0, 2, 5, 5));
 
     JTextField studentNameField = new JTextField();
     JComboBox<String> studentSelector = new JComboBox<>();
 
-    // disciplinas vindas de Gradle.subjects (editável)
     JComboBox<String> subjectSelector = new JComboBox<>(Gradle.subjects.toArray(new String[0]));
     subjectSelector.setEditable(true);
 
@@ -48,12 +45,10 @@ void main() {
     formPanel.add(addGradeButton);
     formPanel.add(manageSubjectsButton);
 
-    // ==== AREA DE RANK ====
     JTextArea outputArea = new JTextArea();
     outputArea.setEditable(false);
     JScrollPane outputScroll = new JScrollPane(outputArea);
 
-    // ==== BOTÕES ====
     JPanel bottomPanel = new JPanel();
     bottomPanel.add(showRankButton);
 
@@ -62,9 +57,6 @@ void main() {
     frame.add(outputScroll, BorderLayout.EAST);
     frame.add(bottomPanel, BorderLayout.SOUTH);
 
-    // ==== LÓGICA ====
-
-    // Adicionar aluno
     addStudentButton.addActionListener(e -> {
         String name = studentNameField.getText().trim();
         if (name.isEmpty()) {
@@ -80,7 +72,6 @@ void main() {
         studentNameField.setText("");
     });
 
-    // Adicionar nota ao aluno selecionado
     addGradeButton.addActionListener(e -> {
         int selectedIndex = studentSelector.getSelectedIndex();
         if (selectedIndex == -1) {
@@ -97,25 +88,23 @@ void main() {
         try {
             double gradeValue = Double.parseDouble(gradeStr);
 
-            // se a disciplina digitada não existe ainda → adiciona
             if (!Gradle.subjects.contains(subject)) {
                 Gradle.subjects.add(subject);
                 subjectSelector.addItem(subject);
-                tableModel.addColumn(subject); // cria coluna na tabela
+                tableModel.addColumn(subject);
             }
 
             Student student = classroom.students.get(selectedIndex);
             student.addGradle(subject, gradeValue);
 
-            // atualizar célula da nota
             int colIndex = -1;
-            for (int i = 2; i < tableModel.getColumnCount(); i++) { // a partir da coluna 2 (coluna média é 1)
+            for (int i = 2; i < tableModel.getColumnCount(); i++) {
                 if (tableModel.getColumnName(i).equals(subject)) {
                     colIndex = i;
                     break;
                 }
             }
-            if (colIndex == -1) { // se não existir, cria
+            if (colIndex == -1) {
                 tableModel.addColumn(subject);
                 colIndex = tableModel.getColumnCount() - 1;
             }
@@ -124,7 +113,6 @@ void main() {
             tableModel.setValueAt(student.name, row, 0);
             tableModel.setValueAt(gradeValue, row, colIndex);
 
-            // atualizar média
             tableModel.setValueAt(student.average(), row, 1);
 
             gradeField.setText("");
@@ -133,7 +121,6 @@ void main() {
         }
     });
 
-    // Mostrar ranking
     showRankButton.addActionListener(e -> {
         ArrayList<Student> rankStudents = classroom.getRank();
         outputArea.setText("--- Ranking ---\n");
@@ -144,7 +131,6 @@ void main() {
         }
     });
 
-    // Gerenciar disciplinas
     manageSubjectsButton.addActionListener(e -> {
         JDialog dialog = new JDialog(frame, "Disciplinas Cadastradas", true);
         dialog.setSize(400, 300);
@@ -177,7 +163,6 @@ void main() {
                     Gradle.subjects.remove(removedSubject);
                     subjectSelector.removeItem(removedSubject);
 
-                    // Remove coluna da tabela
                     int colToRemove = -1;
                     for (int i = 2; i < tableModel.getColumnCount(); i++) {
                         if (tableModel.getColumnName(i).equals(removedSubject)) {
@@ -186,15 +171,13 @@ void main() {
                         }
                     }
                     if (colToRemove != -1) {
-                        // remover a coluna do JTable
                         table.getColumnModel().removeColumn(table.getColumnModel().getColumn(colToRemove));
                     }
 
-                    // Remove a nota da disciplina de cada aluno e atualiza média
                     for (int row = 0; row < classroom.students.size(); row++) {
                         Student student = classroom.students.get(row);
                         student.removeGradle(removedSubject);
-                        tableModel.setValueAt(student.average(), row, 1); // atualizar média
+                        tableModel.setValueAt(student.average(), row, 1);
                     }
                 }
             }
@@ -207,7 +190,6 @@ void main() {
     frame.setVisible(true);
 }
 
-// método auxiliar para remover coluna do JTable
 private static void removeColumn(JTable table, int colIndex) {
     table.getColumnModel().removeColumn(table.getColumnModel().getColumn(colIndex));
 }
