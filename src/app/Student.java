@@ -39,4 +39,13 @@ public class Student {
         }
         gradles.add(new Gradle(subject, value));
     }
+
+    public void removeGradle(String subject) {
+        for (Gradle gradle : gradles) {
+            if (gradle.name.equals(subject)) {
+                gradles.remove(gradle);
+                return;
+            }
+        }
+    }
 }
